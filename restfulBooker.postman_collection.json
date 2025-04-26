@@ -1,0 +1,860 @@
+{
+	"info": {
+		"_postman_id": "da2070fd-49ef-43ee-974d-b731a790e8e8",
+		"name": "restfulBooker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10263534",
+		"_collection_link": "https://www.postman.com/universal-moon-632271/workspace/restfulbookercomp/collection/10263534-da2070fd-49ef-43ee-974d-b731a790e8e8?action=share&source=collection_link&creator=10263534"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Auth",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response contains token\", function () {\r",
+									"        pm.response.to.have.jsonBody(\"token\");\r",
+									"    });\r",
+									"pm.test(\"check login response time less than 600ms\" , function(){\r",
+									"        pm.expect(pm.response.responseTime).to.be.below(600);\r",
+									"    });\r",
+									"// check resposne body have token \r",
+									"pm.test(\"check response body contain token \" ,function(){\r",
+									"    // pm.expect(JSON.parse(responseBody)).to.have.property(\"token\")\r",
+									"\t\tpm.expect(pm.response.json()).to.have.property(\"token\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check response body not contain token \" ,function(){\r",
+									"\t\tpm.expect(pm.response.json()).to.not.have.property(\"Token\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check response body token not null  \" ,function(){\r",
+									"\t\tpm.expect(pm.response.json().token ).to.not.be.null\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check response body token not empty  \" ,function(){\r",
+									"\t\tpm.expect(pm.response.json().token ).to.not.be.undefined\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check response body token length greater than 12 number \" ,function(){\r",
+									"\t\tpm.expect(pm.response.json().token.length).to.be.greaterThan(12)\r",
+									"});\r",
+									"\r",
+									"var responseData =  pm.response.json();\r",
+									"pm.environment.set(\"token\", responseData.token);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"username\" : \"admin\",\r\n\"password\" : \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/auth",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "CreateBooking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"function getRandomMeal(){\r",
+									"    const meals = [\"breakfast\" , \"lunch\" , \"dinner\"];\r",
+									"    const randomIndex = Math.floor(Math.random() * meals.length);\r",
+									"    return meals[randomIndex];\r",
+									"}\r",
+									"\r",
+									"\r",
+									"var selectedMealInRequest = getRandomMeal();\r",
+									"pm.collectionVariables.set(\"additionalneeds\" , getRandomMeal() );\r",
+									"console.log(getRandomMeal());\r",
+									"\r",
+									"\r",
+									"/////////////////////////////////////////////////\r",
+									"function getRandomDate(start, end) {\r",
+									"    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()) );\r",
+									"}\r",
+									"\r",
+									"const startDate = new Date('1990-01-01');\r",
+									"const endDate = new Date('1999-12-31');\r",
+									"\r",
+									"let checkinDate = getRandomDate(startDate, endDate);\r",
+									"let checkoutDate;\r",
+									"\r",
+									"// Ensure checkout is after checkin\r",
+									"do {\r",
+									"    checkoutDate = getRandomDate(startDate, endDate);\r",
+									"} while (checkoutDate <= checkinDate);\r",
+									"\r",
+									"pm.environment.set(\"checkin\", checkinDate.toISOString().split('T')[0]);\r",
+									"pm.environment.set(\"checkout\", checkoutDate.toISOString().split('T')[0]);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check login response time less than 1000ms\" , function(){\r",
+									"        pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"    });\r",
+									"\r",
+									"var requestData = JSON.parse(pm.request.body.raw);\r",
+									"var responseData =  pm.response.json();\r",
+									"\r",
+									"// check that first name in request equal firstname in response\r",
+									"pm.test(\"check that firstname in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.booking.firstname).to.eql(requestData.firstname);\r",
+									"});\r",
+									"pm.test(\"check that firstname in request isn't equal null \" , function(){\r",
+									"\tpm.expect(responseData.booking.firstname).not.be.null;\r",
+									"});\r",
+									"pm.test(\"check that firstname in request is string \" , function(){\r",
+									"\tpm.expect(typeof responseData.booking.firstname).to.be.eql('string');\r",
+									"});\r",
+									"\r",
+									"// check that last name in request equal firstname in response\r",
+									"pm.test(\"check that lastname in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.booking.lastname).to.eql(requestData.lastname);\r",
+									"});\r",
+									"pm.test(\"check that lasname in request isn't equal null \" , function(){\r",
+									"\tpm.expect(responseData.booking.lastname).not.be.null;\r",
+									"});\r",
+									"pm.test(\"check that lastname in request is string \" , function(){\r",
+									"\tpm.expect(typeof responseData.booking.lastname).to.be.eql('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// check that totalPrice in request equal totalprice in response\r",
+									"pm.test(\"check that totalPrice in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.booking.totalprice).to.eql(requestData.totalprice);\r",
+									"});\r",
+									"pm.test(\"check that totalPrice in request isn't null\" , function(){\r",
+									"\tpm.expect(responseData.booking.totalprice).not.be.null;\r",
+									"});\r",
+									"pm.test(\"check that totalPrice in request not undefined\" , function(){\r",
+									"    pm.expect(responseData.booking.totalprice).not.be.undefined;\r",
+									"});\r",
+									"pm.test(\"check that totalPrice in request equal number\" , function(){\r",
+									"\tpm.expect(typeof responseData.booking.totalprice).to.be.equal('number');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// check that depositpaid in request equal depositpaid in response\r",
+									"pm.test(\"check that depositpaid in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.booking.depositpaid).to.eql(requestData.depositpaid);\r",
+									"});\r",
+									"pm.test(\"check that depositpaid in request isn't null\" , function(){\r",
+									"\tpm.expect(responseData.booking.depositpaid).not.be.null;\r",
+									"});\r",
+									"pm.test(\"check that depositpaid in request not undefined\" , function(){\r",
+									"    pm.expect(responseData.booking.depositpaid).not.be.undefined;\r",
+									"});\r",
+									"pm.test(\"check that depositpaid in request equal number\" , function(){\r",
+									"\tpm.expect(typeof responseData.booking.depositpaid).to.be.equal('boolean');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// check that checkin in request equal checkin in response\r",
+									"pm.test(\"check that checkin in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.booking.bookingdates.checkin).to.eql(requestData.bookingdates.checkin);\r",
+									"});\r",
+									"\r",
+									"// check that checkout in request equal checkout in response\r",
+									"pm.test(\"check that checkout in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.booking.bookingdates.checkout).to.eql(requestData.bookingdates.checkout);\r",
+									"});\r",
+									"\r",
+									"// check that additionaneeds in request equal additionaneeds in response\r",
+									"pm.test(\"check that additionalneeds in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.booking.additionalneeds).to.eql(requestData.additionalneeds);\r",
+									"});\r",
+									"\r",
+									"// check that \"bookingid\" id displayed in response \r",
+									"pm.test(\"bookingid is present, not null, and not empty\", function () {\r",
+									"    pm.expect(responseData).to.have.property(\"bookingid\");\r",
+									"    pm.expect(responseData.bookingid).to.not.be.null;\r",
+									"    pm.expect(responseData.bookingid).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"// check that booking is displayed & from type object\r",
+									"pm.test(\"booking is present and is an object\", function () {\r",
+									"    pm.expect(responseData).to.have.property(\"booking\");\r",
+									"    pm.expect(typeof responseData.booking).to.eql(\"object\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// check that booking object have all required attributes \r",
+									"pm.test(\"check that booking object have all required keys\" , function(){\r",
+									" pm.expect(responseData.booking).to.have.all.keys(\r",
+									"        \"firstname\",\r",
+									"        \"lastname\",\r",
+									"        \"totalprice\",\r",
+									"        \"depositpaid\",\r",
+									"        \"bookingdates\",\r",
+									"        \"additionalneeds\"\r",
+									"    );\r",
+									"});\r",
+									"\r",
+									"///Assertion for  bookingDates ::\r",
+									"// check that checkin is random generated in required date \r",
+									"pm.test(\"Check-in is on or after 1990-01-01\", function () {\r",
+									"    var checkin = new Date(responseData.booking.bookingdates.checkin);\r",
+									"    var minimumDate = new Date(\"1990-01-01\");\r",
+									"\r",
+									"    pm.expect(checkin >= minimumDate, \"Check-in should not be before 1990-01-01\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"//check that checkout is random generated in required date\r",
+									"pm.test(\"Check-out is on or before 1999-12-31\", function () {\r",
+									"    var checkout = new Date(responseData.booking.bookingdates.checkout);\r",
+									"    var maximumDate = new Date(\"1999-12-31\");\r",
+									"\r",
+									"    pm.expect(checkout <= maximumDate, \"Check-in should not be after 1999-12-31\").to.be.true;\r",
+									"});\r",
+									"\r",
+									"///check that checkin is less than checout\r",
+									"pm.test(\"check that checkin is less than checkout date\" , function(){\r",
+									"    var checkin = new Date(responseData.booking.bookingdates.checkin);\r",
+									"    var checkout = new Date(responseData.booking.bookingdates.checkout);\r",
+									"    pm.expect(checkin < checkout).to.be.true;\r",
+									"});\r",
+									"\r",
+									"////////////////////\r",
+									"// Assertion for additional Meal ::\r",
+									"// check that additinal meal in response mathes the one sent in request\r",
+									"pm.test(\"Additional needs in response matches the request\", function () {\r",
+									"    var expectedMealInRequest = requestData.additionalneeds;\r",
+									"    var actualMealInResponse = responseData.booking.additionalneeds; \r",
+									"    pm.expect(actualMealInResponse).to.eql(expectedMealInRequest);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"// extract bookinId from api response \r",
+									"pm.environment.set(\"bookingid\", responseData.bookingid);\r",
+									"\r",
+									"// extract creating booking data for assertions in getbooking api\r",
+									"pm.collectionVariables.set(\"firstname\", responseData.booking.firstname);\r",
+									"pm.environment.set(\"lastname\", responseData.booking.lastname);\r",
+									"pm.environment.set(\"totalprice\", responseData.booking.totalprice);\r",
+									"pm.environment.set(\"depositpaid\", responseData.booking.depositpaid);\r",
+									"pm.environment.set(\"checkin\", responseData.booking.bookingdates.checkin);\r",
+									"pm.environment.set(\"checkout\", responseData.booking.bookingdates.checkout);\r",
+									"pm.environment.set(\"additionalneeds\", responseData.booking.additionalneeds);\r",
+									"\r",
+									"console.log(\"Booking ID set:\", responseData.bookingid);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{$randomFirstName}}\",\r\n    \"lastname\" : \"{{$randomLastName}}\",\r\n    \"totalprice\" : {{$randomInt}},\r\n    \"depositpaid\" : {{$randomBoolean}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\": \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalneeds}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getBookingDetails",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Check Status Code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check Response Time is below 20000\", function () { \r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains Firstname\", function () {\r",
+									"    pm.expect(responseData.firstname).not.be.undefined;\r",
+									"    pm.expect(responseData.firstname).to.not.be.null;\r",
+									"    pm.expect(typeof responseData.firstname).to.be.equal('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains lastName\", function () {\r",
+									"    pm.expect(responseData.lastname).not.be.undefined;\r",
+									"    pm.expect(responseData.lastname).not.be.null;\r",
+									"    pm.expect(typeof responseData.lastname).to.be.equal('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains TotalPrice\", function () {\r",
+									"    pm.expect(responseData.totalprice).not.be.undefined;\r",
+									"    pm.expect(responseData.totalprice).not.be.null;\r",
+									"    pm.expect(typeof responseData.totalprice).to.be.equal('number');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains Depositpaid\", function () {\r",
+									"    pm.expect(responseData.depositpaid).not.be.undefined;\r",
+									"    pm.expect(responseData.depositpaid).not.be.null;\r",
+									"    pm.expect(typeof responseData.depositpaid).to.be.equal('boolean');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check response Body Contains BookingDates and is Object\", function () {\r",
+									"    pm.expect(responseData.bookingdates).not.be.undefined;\r",
+									"    pm.expect(responseData.bookingdates).not.be.null;\r",
+									"    pm.expect(typeof responseData.bookingdates).to.equal('object');\r",
+									"});\r",
+									"\r",
+									"// check that checkin&out is in resposnse & not null\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains Additional Details\", function () {\r",
+									"    pm.expect(responseData.additionalneeds).not.be.null;\r",
+									"    pm.expect(responseData.additionalneeds).not.be.undefined;\r",
+									"    pm.expect(typeof responseData.additionalneeds).to.be.equal('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Check that Response body has all required keys\", function () {\r",
+									"    pm.expect(responseData).to.have.all.keys(\r",
+									"        \"firstname\",\r",
+									"        \"lastname\",\r",
+									"        \"totalprice\",\r",
+									"        \"depositpaid\",\r",
+									"        \"bookingdates\",\r",
+									"        \"additionalneeds\"\r",
+									"    );\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"First name is same in creating booking request\", function () {\r",
+									"   pm.expect(responseData.firstname).to.eql(pm.collectionVariables.get(\"firstname\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Last name is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.lastname).to.eql(pm.environment.get(\"lastname\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Total price is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.totalprice).to.eql(parseInt(pm.environment.get(\"totalprice\")));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deposit paid is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.depositpaid).to.eql(pm.environment.get(\"depositpaid\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check-in date is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.bookingdates.checkin).to.eql(pm.environment.get(\"checkin\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check-out date is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.bookingdates.checkout).to.eql(pm.environment.get(\"checkout\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Additional needs is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.additionalneeds).to.eql(pm.environment.get(\"additionalneeds\"));\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						},
+						"description": "Generated from cURL: curl -i https://restful-booker.herokuapp.com/booking/1\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "updateBooking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// validate that status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"var requestData = JSON.parse(pm.request.body.raw);\r",
+									"var responseData =  pm.response.json();\r",
+									"\r",
+									"// check that first name in request equal firstname in response\r",
+									"pm.test(\"check that firstname in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.firstname).to.eql(requestData.firstname);\r",
+									"});\r",
+									"\r",
+									"// check that last name in request equal firstname in response\r",
+									"pm.test(\"check that lastname in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.lastname).to.eql(requestData.lastname);\r",
+									"});\r",
+									"\r",
+									"// check that totalPrice in request equal firstname in response\r",
+									"pm.test(\"check that totalPrice in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.totalprice).to.eql(requestData.totalprice);\r",
+									"});\r",
+									"\r",
+									"// check that depositpaid in request equal firstname in response\r",
+									"pm.test(\"check that depositpaid in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.depositpaid).to.eql(requestData.depositpaid);\r",
+									"});\r",
+									"\r",
+									"// check that checkin in request equal firstname in response\r",
+									"pm.test(\"check that checkin in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.bookingdates.checkin).to.eql(requestData.bookingdates.checkin);\r",
+									"});\r",
+									"\r",
+									"// check that checkout in request equal firstname in response\r",
+									"pm.test(\"check that checkout in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.bookingdates.checkout).to.eql(requestData.bookingdates.checkout);\r",
+									"});\r",
+									"\r",
+									"// check that additionaneeds in request equal firstname in response\r",
+									"pm.test(\"check that additionalneeds in request is the same in response\" , function(){\r",
+									"    pm.expect(responseData.additionalneeds).to.eql(requestData.additionalneeds);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"/// extract data after update\r",
+									"// extract creating booking data for assertions in getbooking api\r",
+									"pm.environment.set(\"firstnameUpdated\", responseData.firstname);\r",
+									"pm.environment.set(\"lastnameUpdated\", responseData.lastname);\r",
+									"pm.environment.set(\"totalpriceUpdated\", responseData.totalprice);\r",
+									"pm.environment.set(\"depositpaidUpdated\", responseData.depositpaid);\r",
+									"pm.environment.set(\"checkinUpdaed\", responseData.bookingdates.checkin);\r",
+									"pm.environment.set(\"checkoutUpdated\", responseData.bookingdates.checkout);\r",
+									"pm.environment.set(\"additionalneedsUpdated\", responseData.additionalneeds);\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"aya\",\r\n    \"lastname\" : \"Brown\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						},
+						"description": "Generated from cURL: curl -X PUT \\\r\n  https://restful-booker.herokuapp.com/booking/1 \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'Accept: application/json' \\\r\n  -H 'Cookie: token=abc123' \\\r\n  -d '{\r\n    \"firstname\" : \"James\",\r\n    \"lastname\" : \"Brown\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}'"
+					},
+					"response": []
+				},
+				{
+					"name": "getBookingDetailsAfterUpdate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Check Status Code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check Response Time is below 20000\", function () { \r",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains Firstname\", function () {\r",
+									"    pm.expect(responseData.firstname).not.be.undefined;\r",
+									"    pm.expect(responseData.firstname).to.not.be.null;\r",
+									"    pm.expect(typeof responseData.firstname).to.be.equal('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains lastName\", function () {\r",
+									"    pm.expect(responseData.lastname).not.be.undefined;\r",
+									"    pm.expect(responseData.lastname).not.be.null;\r",
+									"    pm.expect(typeof responseData.lastname).to.be.equal('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains TotalPrice\", function () {\r",
+									"    pm.expect(responseData.totalprice).not.be.undefined;\r",
+									"    pm.expect(responseData.totalprice).not.be.null;\r",
+									"    pm.expect(typeof responseData.totalprice).to.be.equal('number');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains Depositpaid\", function () {\r",
+									"    pm.expect(responseData.depositpaid).not.be.undefined;\r",
+									"    pm.expect(responseData.depositpaid).not.be.null;\r",
+									"    pm.expect(typeof responseData.depositpaid).to.be.equal('boolean');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check Body Contains BookingDates and is Object\", function () {\r",
+									"    pm.expect(responseData.bookingdates).not.be.undefined;\r",
+									"    pm.expect(responseData.bookingdates).not.be.null;\r",
+									"    pm.expect(typeof responseData.bookingdates).to.equal('object');\r",
+									"});\r",
+									"\r",
+									"// check that checkin&out is in resposnse & not null\r",
+									"\r",
+									"pm.test(\"Check that response Body Contains Additional Details\", function () {\r",
+									"    pm.expect(responseData.additionalneeds).not.be.null;\r",
+									"    pm.expect(responseData.additionalneeds).not.be.undefined;\r",
+									"    pm.expect(typeof responseData.additionalneeds).to.be.equal('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Check that Response body has all required keys\", function () {\r",
+									"    pm.expect(responseData).to.have.all.keys(\r",
+									"        \"firstname\",\r",
+									"        \"lastname\",\r",
+									"        \"totalprice\",\r",
+									"        \"depositpaid\",\r",
+									"        \"bookingdates\",\r",
+									"        \"additionalneeds\"\r",
+									"    );\r",
+									"});\r",
+									"\r",
+									"pm.test(\"First name is same in creating booking request\", function () {\r",
+									"   pm.expect(responseData.firstname).to.eql(pm.environment.get(\"firstnameUpdated\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Last name is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.lastname).to.eql(pm.environment.get(\"lastnameUpdated\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Total price is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.totalprice).to.eql(parseInt(pm.environment.get(\"totalpriceUpdated\")));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deposit paid is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.depositpaid).to.eql(pm.environment.get(\"depositpaidUpdated\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check-in date is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.bookingdates.checkin).to.eql(pm.environment.get(\"checkinUpdaed\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check-out date is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.bookingdates.checkout).to.eql(pm.environment.get(\"checkoutUpdated\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Additional needs is same in creating booking request\", function () {\r",
+									"    pm.expect(responseData.additionalneeds).to.eql(pm.environment.get(\"additionalneedsUpdated\"));\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						},
+						"description": "Generated from cURL: curl -i https://restful-booker.herokuapp.com/booking/1\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "deleteBooking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{token}}"
+							}
+						],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						},
+						"description": "Generated from cURL: curl -X DELETE \\\r\n  https://restful-booker.herokuapp.com/booking/1 \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'Cookie: token=abc123'"
+					},
+					"response": []
+				},
+				{
+					"name": "getBookingDetailsAfterDelete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
+							"protocol": "https",
+							"host": [
+								"restful-booker",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"booking",
+								"{{bookingid}}"
+							]
+						},
+						"description": "Generated from cURL: curl -i https://restful-booker.herokuapp.com/booking/1\r\n"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "additionalneeds",
+			"value": "dinner"
+		},
+		{
+			"key": "bookingid",
+			"value": 2284
+		},
+		{
+			"key": "firstname",
+			"value": "Darrel"
+		},
+		{
+			"key": "lastname",
+			"value": "Kiehn"
+		},
+		{
+			"key": "totalprice",
+			"value": 917
+		},
+		{
+			"key": "depositpaid",
+			"value": false
+		},
+		{
+			"key": "checkin",
+			"value": "1998-07-17"
+		},
+		{
+			"key": "checkout",
+			"value": "1999-10-10"
+		}
+	]
+}
