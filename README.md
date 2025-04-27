@@ -1,6 +1,6 @@
 # Restful Booker
 
-![images.png]
+(images.png)
 
 ## Table of Contents
 
