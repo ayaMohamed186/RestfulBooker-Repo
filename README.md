@@ -1,6 +1,6 @@
 # Restful Booker
 
-(images.png)
+![Restful booker logo](images.png)
 
 ## Table of Contents
 
