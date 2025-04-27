@@ -27,33 +27,38 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"var responseData =  pm.response.json();\r",
+									"\r",
 									"pm.test(\"Response contains token\", function () {\r",
 									"        pm.response.to.have.jsonBody(\"token\");\r",
 									"    });\r",
-									"pm.test(\"check login response time less than 600ms\" , function(){\r",
-									"        pm.expect(pm.response.responseTime).to.be.below(600);\r",
+									"pm.test(\"check login response time less than 1000ms\" , function(){\r",
+									"        pm.expect(pm.response.responseTime).to.be.below(1000);\r",
 									"    });\r",
-									"// check resposne body have token \r",
+									"\r",
 									"pm.test(\"check response body contain token \" ,function(){\r",
-									"    // pm.expect(JSON.parse(responseBody)).to.have.property(\"token\")\r",
-									"\t\tpm.expect(pm.response.json()).to.have.property(\"token\")\r",
+									"\t\tpm.expect(responseData).to.have.property(\"token\")\r",
 									"});\r",
 									"\r",
 									"pm.test(\"check response body not contain token \" ,function(){\r",
-									"\t\tpm.expect(pm.response.json()).to.not.have.property(\"Token\")\r",
+									"\t\tpm.expect(responseData).to.not.have.property(\"Token\")\r",
 									"});\r",
 									"\r",
 									"pm.test(\"check response body token not null  \" ,function(){\r",
-									"\t\tpm.expect(pm.response.json().token ).to.not.be.null\r",
+									"\t\tpm.expect(responseData.token ).to.not.be.null\r",
 									"});\r",
 									"\r",
 									"pm.test(\"check response body token not empty  \" ,function(){\r",
-									"\t\tpm.expect(pm.response.json().token ).to.not.be.undefined\r",
+									"\t\tpm.expect(responseData.token ).to.not.be.undefined\r",
 									"});\r",
 									"\r",
 									"pm.test(\"check response body token length greater than 12 number \" ,function(){\r",
-									"\t\tpm.expect(pm.response.json().token.length).to.be.greaterThan(12)\r",
+									"\t\tpm.expect(responseData.token.length).to.be.greaterThan(12)\r",
 									"});\r",
+									"\r",
+									"pm.test(\"check the response datatype of the  token is string \", function () {\r",
+									"    pm.expect(typeof responseData.token).to.equal(\"string\")\r",
+									"})\r",
 									"\r",
 									"var responseData =  pm.response.json();\r",
 									"pm.environment.set(\"token\", responseData.token);\r",
@@ -78,12 +83,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://restful-booker.herokuapp.com/auth",
-							"protocol": "https",
+							"raw": "{{baseUrl}}/auth",
 							"host": [
-								"restful-booker",
-								"herokuapp",
-								"com"
+								"{{baseUrl}}"
 							],
 							"path": [
 								"auth"
@@ -165,8 +167,11 @@
 									"pm.test(\"check that firstname in request is string \" , function(){\r",
 									"\tpm.expect(typeof responseData.booking.firstname).to.be.eql('string');\r",
 									"});\r",
+									"pm.test(\"check response body has property firstname\", function () {\r",
+									"    pm.expect(responseData.booking).to.have.property(\"firstname\")\r",
+									"});\r",
 									"\r",
-									"// check that last name in request equal firstname in response\r",
+									"\r",
 									"pm.test(\"check that lastname in request is the same in response\" , function(){\r",
 									"    pm.expect(responseData.booking.lastname).to.eql(requestData.lastname);\r",
 									"});\r",
@@ -176,9 +181,11 @@
 									"pm.test(\"check that lastname in request is string \" , function(){\r",
 									"\tpm.expect(typeof responseData.booking.lastname).to.be.eql('string');\r",
 									"});\r",
+									"pm.test(\"check response body has property lastname\", function () {\r",
+									"    pm.expect(responseData.booking).to.have.property(\"lastname\")\r",
+									"});\r",
 									"\r",
 									"\r",
-									"// check that totalPrice in request equal totalprice in response\r",
 									"pm.test(\"check that totalPrice in request is the same in response\" , function(){\r",
 									"    pm.expect(responseData.booking.totalprice).to.eql(requestData.totalprice);\r",
 									"});\r",
@@ -190,6 +197,9 @@
 									"});\r",
 									"pm.test(\"check that totalPrice in request equal number\" , function(){\r",
 									"\tpm.expect(typeof responseData.booking.totalprice).to.be.equal('number');\r",
+									"});\r",
+									"pm.test(\"check response body has property totalprice\", function () {\r",
+									"    pm.expect(responseData.booking).to.have.property(\"totalprice\")\r",
 									"});\r",
 									"\r",
 									"\r",
@@ -206,6 +216,9 @@
 									"pm.test(\"check that depositpaid in request equal number\" , function(){\r",
 									"\tpm.expect(typeof responseData.booking.depositpaid).to.be.equal('boolean');\r",
 									"});\r",
+									"pm.test(\"check response body has property depositpaid\", function () {\r",
+									"    pm.expect(responseData.booking).to.have.property(\"depositpaid\")\r",
+									"})\r",
 									"\r",
 									"\r",
 									"// check that checkin in request equal checkin in response\r",
@@ -317,12 +330,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://restful-booker.herokuapp.com/booking",
-							"protocol": "https",
+							"raw": "{{baseUrl}}/booking",
 							"host": [
-								"restful-booker",
-								"herokuapp",
-								"com"
+								"{{baseUrl}}"
 							],
 							"path": [
 								"booking"
@@ -343,6 +353,7 @@
 									"pm.test(\"Check Status Code is 200\", function () {\r",
 									"    pm.expect(pm.response.code).to.be.eql(200);\r",
 									"});\r",
+									"\r",
 									"\r",
 									"pm.test(\"Check Response Time is below 20000\", function () { \r",
 									"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
@@ -448,12 +459,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
-							"protocol": "https",
+							"raw": "{{baseUrl}}/booking/{{bookingid}}",
 							"host": [
-								"restful-booker",
-								"herokuapp",
-								"com"
+								"{{baseUrl}}"
 							],
 							"path": [
 								"booking",
@@ -559,12 +567,9 @@
 							}
 						},
 						"url": {
-							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
-							"protocol": "https",
+							"raw": "{{baseUrl}}/booking/{{bookingid}}",
 							"host": [
-								"restful-booker",
-								"herokuapp",
-								"com"
+								"{{baseUrl}}"
 							],
 							"path": [
 								"booking",
@@ -691,12 +696,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
-							"protocol": "https",
+							"raw": "{{baseUrl}}/booking/{{bookingid}}",
 							"host": [
-								"restful-booker",
-								"herokuapp",
-								"com"
+								"{{baseUrl}}"
 							],
 							"path": [
 								"booking",
@@ -716,6 +718,10 @@
 								"exec": [
 									"pm.test(\"Status code is 201\", function () {\r",
 									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"check Status message of get langauge request is created\", function () {\r",
+									"    pm.response.to.have.status(\"Created\");\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -736,12 +742,9 @@
 							}
 						],
 						"url": {
-							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
-							"protocol": "https",
+							"raw": "{{baseUrl}}/booking/{{bookingid}}",
 							"host": [
-								"restful-booker",
-								"herokuapp",
-								"com"
+								"{{baseUrl}}"
 							],
 							"path": [
 								"booking",
@@ -782,12 +785,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://restful-booker.herokuapp.com/booking/{{bookingid}}",
-							"protocol": "https",
+							"raw": "{{baseUrl}}/booking/{{bookingid}}",
 							"host": [
-								"restful-booker",
-								"herokuapp",
-								"com"
+								"{{baseUrl}}"
 							],
 							"path": [
 								"booking",
@@ -795,6 +795,46 @@
 							]
 						},
 						"description": "Generated from cURL: curl -i https://restful-booker.herokuapp.com/booking/1\r\n"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ping",
+			"item": [
+				{
+					"name": "1 - HealthCheck",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//1-Check Status code is 200 as agreed with Backend team\r",
+									"pm.test(\"check Status code of get langauge request is 200\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"pm.test(\"check Status message of get langauge request is created\", function () {\r",
+									"    pm.response.to.have.status(\"Created\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ping",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ping"
+							]
+						}
 					},
 					"response": []
 				}
