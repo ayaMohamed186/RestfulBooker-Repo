@@ -20,10 +20,15 @@ Restful Booker is a Booking application that provides various banking services a
 ## Features
 
 *Booking Management: Create, manage, and cancel bookings for accommodations.
+
 *Guest Information: Collect and store guest details for reservations.
+
 *Payment Processing: Handle payments and transactions for booking confirmations.
+
 *Reservation Modifications: Allow users to modify booking details and dates.
+
 *Availability Checking: Check the availability of rooms or accommodations for specific dates.
+
 *Security: Implement secure and encrypted transactions for guest information and payment processing.
 
 ## Installation
