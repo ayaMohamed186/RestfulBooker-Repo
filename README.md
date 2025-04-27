@@ -36,7 +36,7 @@ Restful Booker is a Booking application that provides various banking services a
 To set up the Restful Booker application locally, follow these steps:
 
 1. Clone the repository:
-*   git clone https://github.com/ayaMohamed186/restfulBoker
+*   git clone https://github.com/ayaMohamed186/RestfulBooker-Repo
 2. Navigate to the project directory:
 *   cd restfulBoker
 3. Install dependencies:
