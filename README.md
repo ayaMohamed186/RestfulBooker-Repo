@@ -15,8 +15,7 @@
 
 Restful Booker is a Booking application that provides various banking services and features. This repository contains the source code for the Restful Booker application.
 
-## Local testing excecution example 
-[images.png]
+![Local testing excecution example](Run.gif)
 
 ## Features
 
