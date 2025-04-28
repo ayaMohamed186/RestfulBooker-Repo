@@ -15,22 +15,24 @@
 
 Restful Booker is a Booking application that provides various banking services and features. This repository contains the source code for the Restful Booker application.
 
-Examples of Run : 
+## Examples of Run : 
 ![Local testing excecution example](Run.gif)
 
 ## Features
 
-*Booking Management: Create, manage, and cancel bookings for accommodations.
+*Create new bookings with details like name, price, dates, and additional needs.
 
-*Guest Information: Collect and store guest details for reservations.
+*Retrieve individual booking information using a unique booking ID.
 
-*Payment Processing: Handle payments and transactions for booking confirmations.
+*Update existing bookings .
 
-*Reservation Modifications: Allow users to modify booking details and dates.
+*Delete bookings using a valid authentication token.
 
-*Availability Checking: Check the availability of rooms or accommodations for specific dates.
+*Supports basic authentication for secured operations (update/delete).
 
-*Security: Implement secure and encrypted transactions for guest information and payment processing.
+*JSON-based request and response for easy integration.
+
+*Simple and clean RESTful endpoints.
 
 ## Installation
 
